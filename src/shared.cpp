@@ -94,6 +94,13 @@ void setupMqttClient()
     _mqttClient.setServer(_brokerIP.c_str(), 1883);
 
     bool isConnected = _mqttClient.connect("awesome_device");
+    if (!isConnected)
+    {
+        delay(1000);
+
+        // Try again one more time.
+        isConnected = _mqttClient.connect("awesome_device");
+    }
 
     if (isConnected)
     {

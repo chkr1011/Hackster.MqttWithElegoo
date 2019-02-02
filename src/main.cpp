@@ -9,6 +9,7 @@
 #include "button.cpp"
 #include "lamp.cpp"
 #include "dht.cpp"
+#include "doorbell.cpp"
 
 void setup()
 {
@@ -18,7 +19,8 @@ void setup()
     // Device code
     //setupButton()
     //setupLamp();
-    setupDht();
+    //setupDht();
+    setupDoorbell();
 }
 
 void loop()
@@ -27,5 +29,6 @@ void loop()
 
     //loopButton();
     //loopLamp();
-    loopDht(elapsedMillis);
+    //loopDht(elapsedMillis);
+    loopDoorbell(elapsedMillis);
 }
