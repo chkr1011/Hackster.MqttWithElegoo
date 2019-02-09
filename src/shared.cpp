@@ -2,11 +2,13 @@ EthernetClient _ethernetClient;
 PubSubClient _mqttClient;
 
 // Replace this IP with the IP of your broker!
-String _brokerIP = "192.168.1.181";
+const char _brokerIP[] = "192.168.1.181";
 
 // These are the MQTT callbacks which are allowing
-// to "attach" several methods for MQTT message handling.
-// The method signature is (topic, payload).
+// to "attach" to MQTT message handling.
+// The method signature is (String topic, String payload).
+// This  can be optimized by adding a bool as return value
+// which will break the loop once the message is processed.
 typedef void (*mqttMessageCallback)(String, String);
 
 mqttMessageCallback _mqttMessageCallbacks[10];
@@ -40,7 +42,7 @@ void mqttCallback(char *topic, uint8_t *payload, unsigned int payloadLength)
 {
     // For this tutorial and a basic understanding working with 
     // strings is way more straight forward even if it requires
-    // more RAM than working with the buffer directly with memcmp.
+    // more RAM than working with the buffer directly with memcmp etc.
 
     String topicString = String(topic);
 
@@ -53,7 +55,7 @@ void mqttCallback(char *topic, uint8_t *payload, unsigned int payloadLength)
         }
         else
         {
-            // Convert the string to a null-terminated one if required.
+            // Convert the string to a null-terminated one.
             unsigned char buffer[payloadLength + 1];
             for (uint16_t i = 0; i < payloadLength; i++)
             {
@@ -91,7 +93,7 @@ void setupMqttClient()
     // Link MQTT lib with network lib.
     _mqttClient.setClient(_ethernetClient);
     _mqttClient.setCallback(mqttCallback);
-    _mqttClient.setServer(_brokerIP.c_str(), 1883);
+    _mqttClient.setServer(_brokerIP, 1883);
 
     bool isConnected = _mqttClient.connect("awesome_device");
     if (!isConnected)
@@ -112,7 +114,7 @@ void setupMqttClient()
     }
     else
     {
-        Serial.println(F("MQTT not connected"));
+        Serial.println(F("MQTT failed"));
     }
 }
 
@@ -140,11 +142,11 @@ uint16_t loopShared()
     // Calculate the time which is elapsed since the last
     // time this methid was reached.
     uint64_t newMillis = millis();
-    uint64_t diff = newMillis - _oldMillis;
+    uint64_t delay = newMillis - _oldMillis;
     _oldMillis = newMillis;
 
     // Maintain MQTT connection and process messages.
     _mqttClient.loop();
 
-    return diff;
+    return delay;
 }

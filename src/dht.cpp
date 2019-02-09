@@ -3,7 +3,7 @@
 
 DHT _dht(DHT_PIN, DHT11);
 
-int32_t _timeout = PUSH_INTERVAL;
+int32_t _dhtTimeout = PUSH_INTERVAL;
 
 void setupDht()
 {
@@ -26,21 +26,23 @@ void publishSensorValues()
     Serial.print(F(" H="));
     Serial.println(h);
 
+    // The values are converted to their string representation before sending.
+    // This makes inspecting the values in MQTTBox easier.
     publishMqttMessage("awesome_device/temperature", String(t).c_str());
     publishMqttMessage("awesome_device/humidity", String(h).c_str());
 }
 
-void loopDht(uint16_t elapsedMillies)
+void loopDht(uint16_t elapsedMS)
 {
-    _timeout -= elapsedMillies;
-    if (_timeout > 0)
+    _dhtTimeout -= elapsedMS;
+    if (_dhtTimeout > 0)
     {
         // Do nothing because the timeout is not yet elapsed.
         return;
     }
 
     // Restart the timeout.
-    _timeout = PUSH_INTERVAL;
+    _dhtTimeout = PUSH_INTERVAL;
 
     publishSensorValues();
 }

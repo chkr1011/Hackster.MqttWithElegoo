@@ -2,14 +2,17 @@
 
 #include <UIPEthernet.h>  // Library for the network module.
 #include <PubSubClient.h> // MQTT client library.
+
 #include <DHT.h> // Library for accessing the DHT11.
+#include <IRremote.h> // Library for reading IR signals.
 
 #include "shared.cpp"
-
+#include "dht.cpp"
 #include "button.cpp"
 #include "lamp.cpp"
-#include "dht.cpp"
 #include "doorbell.cpp"
+#include "irRemote.cpp"
+#include "photocell.cpp"
 
 void setup()
 {
@@ -20,15 +23,19 @@ void setup()
     //setupButton()
     //setupLamp();
     //setupDht();
-    setupDoorbell();
+    //setupDoorbell();
+    //setupIRRemote();
+    setupPhotocell();
 }
 
 void loop()
 {
-    uint64_t elapsedMillis = loopShared();
+    uint64_t elapsedMS = loopShared();
 
     //loopButton();
     //loopLamp();
-    //loopDht(elapsedMillis);
-    loopDoorbell(elapsedMillis);
+    //loopDht(elapsedMS);
+    //loopDoorbell(elapsedMS);
+    //loopIRRemote();
+    loopPhotocell(elapsedMS);
 }

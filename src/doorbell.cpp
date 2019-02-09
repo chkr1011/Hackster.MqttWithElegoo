@@ -9,12 +9,16 @@ void turnDoorbellOff()
     // Please have a look at the lamp to find reasons
     // for this approach.
     digitalWrite(BUZZER_PIN, HIGH);
+
+    Serial.println(F("RING end"));
 }
 
 void turnDoorbellOn()
 {
     digitalWrite(BUZZER_PIN, LOW);
     _doorBellDuration = AUTO_OFF_TIMEOUT;
+
+    Serial.println(F("RING start"));
 }
 
 void handleDoorbellMqttMessage(String topic, String payload)
